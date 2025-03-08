@@ -17,4 +17,20 @@ class UserView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Return errors if invalid
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserViewWithIds(APIView):
+    
+    def get_object(self,id):   
+        try:
+            usr = UserModel.objects.get(pk=id)
+            return usr
+        except UserModel.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    def get(self,request, id):
+        usr = self.get_object(id)
+        serializer = UserSerializer(usr)
+        return Response(serializer.data)
+    
+    
