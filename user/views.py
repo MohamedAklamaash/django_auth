@@ -33,4 +33,14 @@ class UserViewWithIds(APIView):
         serializer = UserSerializer(usr)
         return Response(serializer.data)
     
+    def put(self,request, id):
+        usr = self.get_object(id)
+        serializedUser = UserSerializer(usr, data = request.data) # data is getting updated here
+        
+        if serializedUser.is_valid(): # checking it if it is valid
+            serializedUser.save() # saving it if it's valid
+            return Response(serializedUser.data,status=status.HTTP_201_CREATED) # success response
+        
+        return Response(status.HTTP_400_BAD_REQUEST) # error response
+
     
