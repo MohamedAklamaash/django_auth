@@ -10,12 +10,11 @@ class UserView(APIView):
     def get(self, request):
         usrs = UserModel.objects.all()
         serialized_users = UserSerializer(usrs, many=True)
-        return Response(serialized_users)
+        return Response(serialized_users.data)  # Use `.data`
 
     def post(self, request):
-        serializer = UserSerializer(data = request.data)
-        if serializer.is_valid(): # username, email, password 
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Return errors if invalid
