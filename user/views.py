@@ -21,26 +21,37 @@ class UserView(APIView):
 
 class UserViewWithIds(APIView):
     
-    def get_object(self,id):   
+    def get_object(self, id):   
         try:
-            usr = UserModel.objects.get(pk=id)
-            return usr
+            return UserModel.objects.get(pk=id)
         except UserModel.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    def get(self,request, id):
+            return None
+
+    def get(self, request, id):
         usr = self.get_object(id)
+        if usr is None: 
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
         serializer = UserSerializer(usr)
         return Response(serializer.data)
-    
-    def put(self,request, id):
-        usr = self.get_object(id)
-        serializedUser = UserSerializer(usr, data = request.data) # data is getting updated here
-        
-        if serializedUser.is_valid(): # checking it if it is valid
-            serializedUser.save() # saving it if it's valid
-            return Response(serializedUser.data,status=status.HTTP_201_CREATED) # success response
-        
-        return Response(status.HTTP_400_BAD_REQUEST) # error response
 
-    
+    def put(self, request, id):
+        usr = self.get_object(id)
+        if usr is None:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializedUser = UserSerializer(usr, data=request.data)
+        
+        if serializedUser.is_valid():
+            serializedUser.save()
+            return Response(serializedUser.data, status=status.HTTP_200_OK)
+        
+        return Response(serializedUser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        usr = self.get_object(id)
+        if usr is None:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        usr.delete()
+        return Response({"message": "User deleted successfully"}, status=status.HTTP_200_OK)
