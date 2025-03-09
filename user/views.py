@@ -10,7 +10,7 @@ class UserView(APIView):
     def get(self, request):
         usrs = UserModel.objects.all()
         serialized_users = UserSerializer(usrs, many=True)
-        return Response(serialized_users.data)  # Use `.data`
+        return Response(serialized_users.data)
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)

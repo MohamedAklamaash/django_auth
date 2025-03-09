@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'user',
-    'books'
+    'books',
+    'custom_auth'
 ]
 APPEND_SLASH = False
 
