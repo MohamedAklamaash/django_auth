@@ -11,3 +11,6 @@ class AuthModel(models.Model):
     
     def checkPassword(self, raw_password):
         return check_password(raw_password, self.password)
+    
+    def __str__(self):
+        return self.username

@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+from datetime import timedelta
 
 # Application definition
 
@@ -38,11 +39,32 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'user',
     'books',
     'custom_auth'
 ]
 APPEND_SLASH = False
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',  # Allows public access to endpoints unless specified
+    ),
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Corrected
+    'ROTATE_REFRESH_TOKENS': True,  # Enables refresh token rotation
+    'BLACKLIST_AFTER_ROTATION': True,  # Prevents reuse of old refresh tokens
+    'AUTH_HEADER_TYPES': ('Bearer',),  # Ensures "Authorization: Bearer <token>"
+}
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
